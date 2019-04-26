@@ -42,28 +42,19 @@ class ImageOutputModel(models.Model):
         verbose_name_plural = 'imageoutputs'
 
 
-# output_image = models.ForeignKey('ImageModel',
-#                                  related_name='output',
-#                                  on_delete=models.CASCADE,
-#                                  )
+class ImageOutputBboxModel(models.Model):
+    image_output = models.ForeignKey(
+        ImageOutputModel, related_name='bbox', on_delete=models.CASCADE)
 
-# class ImageOutputBboxModel(models.Model):
-#     output_bbox = models.ForeignKey(
-        # ImageOutputModel, related_name='bbox', on_delete=models.CASCADE)
-#     imageOutput = models.ForeignKey('ImageOutputModel',
-#                                     related_name='bbox',
-#                                     on_delete=models.CASCADE,
-#                                     )
-    # bbox = models.FloatField(blank=False)
-#
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-#
+    bbox_value = models.FloatField(blank=False)
 
-    # def __str__(self):
-    #     return f'<image_output_bbox: {self.image_output_bbox}>'
-#
-#     class Meta:
-#         ordering = ('-created_at',)
-#         verbose_name = 'imageoutputbbox'
-#         verbose_name_plural = 'imageoutputbboxs'
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'<bbox_value: {self.bbox_value}>'
+
+    class Meta:
+        ordering = ('-created_at',)
+        verbose_name = 'imageoutputbbox'
+        verbose_name_plural = 'imageoutputbboxs'

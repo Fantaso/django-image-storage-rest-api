@@ -2,54 +2,41 @@
 
 from rest_framework import serializers
 
-from .models import ImageModel, ImageOutputModel
-# from .models import ImageModel, ImageOutputBboxModel, ImageOutputModel
+# from .models import ImageModel, ImageOutputModel
+from .models import ImageModel, ImageOutputBboxModel, ImageOutputModel
 
 
-# class ImageOutputBboxSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         lookup_field = 'id'
-#         model = ImageOutputBboxModel
-#         fields = '__all__'
-#         read_only_fields = ('id', 'created_at', 'updated_at')
+class ImageOutputBboxSerializer(serializers.ModelSerializer):
+    class Meta:
+        lookup_field = 'id'
+        model = ImageOutputBboxModel
+        fields = ('bbox_value',)
+        # read_only_fields = ('id', 'created_at', 'updated_at')
 
 
 class ImageOutputSerializer(serializers.ModelSerializer):
-    # bbox = ImageOutputBboxSerializer()
-    # bbox = serializers.PrimaryKeyRelatedField(many=True, queryset=ImageOutputModel.objects.all())
+    bbox = ImageOutputBboxSerializer(many=True)
 
     class Meta:
         lookup_field = 'id'
         model = ImageOutputModel
-        # fields = '__all__'
-        fields = ('probability', 'label', 'result')
-        # fields = ('id', 'url', 'output_image', 'probability', 'label', 'result', 'bbox')
-        # read_only_fields = ('id', 'created_at', 'updated_at')
-        # image = models.ForeignKey('ImageSerializer', related_name='output', on_delete=models.CASCADE)
+        fields = ('probability', 'label', 'result', 'bbox')
 
 
 class ImageSerializer(serializers.ModelSerializer):
-    # output = serializers.RelatedField(read_only=True)
     output = ImageOutputSerializer(many=True)
-    # output = serializers.StringRelatedField()
 
     class Meta:
         lookup_field = 'id'
         model = ImageModel
-        # fields = '__all__'
-        # exclude = ('id', 'created_at', 'updated_at')
         fields = ('status', 'imagePath', 'imageId', 'output')
         # read_only_fields = ('id', 'created_at', 'updated_at')
         # depth = 2
 
     def create(self, validated_data):
         output_data = validated_data.pop('output')
-        # print(output_data)
-        # print(**output_data)
         image = ImageModel.objects.create(**validated_data)
         for output in output_data:
-            # print(output)
-            # print(**output)
             ImageOutputModel.objects.create(image=image, **output)
         return image
 
@@ -72,8 +59,11 @@ ImageSerializer():
         result = CharField(max_length=50)
 '''
 # TEST SERILIZER CREATTION
+# from img_api.serializers import *
+# from img_api.models import *
 # image1 = ImageModel.objects.create(status=ImageModel.COMPLETE, imagePath="1", imageId="1")
 # output1 = ImageOutputModel.objects.create(image=image1, probability=1, label="1", result="1")
+# bbox1 = ImageOutputBboxModel.objects.create(image_output=output1, bbox_value=100)
 
 # TEST SERIALIZER DATA
 data = {
