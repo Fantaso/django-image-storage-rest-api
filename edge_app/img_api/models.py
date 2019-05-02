@@ -29,6 +29,7 @@ class ImageOutputModel(models.Model):
     probability = models.FloatField(blank=False)
     label = models.CharField(max_length=50, blank=False)
     result = models.CharField(max_length=50, blank=False)
+    bbox = models.CharField(max_length=9000000000, blank=False, default='[]')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -36,25 +37,19 @@ class ImageOutputModel(models.Model):
     def __str__(self):
         return f'<output: {self.probability} {self.label} {self.result}>'
 
+    def set_bbox(self, data):
+        print('SET')
+        print(data, type(data))
+        print(json.dumps(data), type(json.dumps(data)))
+        self.bbox = json.dumps(data)
+
+    def get_bbox(self):
+        print('GET')
+        print(self.bbox, type(self.bbox))
+        print(json.loads(data), type(json.loads(data)))
+        return json.loads(self.bbox)
+
     class Meta:
         ordering = ('-created_at',)
         verbose_name = 'imageoutput'
         verbose_name_plural = 'imageoutputs'
-
-
-class ImageOutputBboxModel(models.Model):
-    image_output = models.ForeignKey(
-        ImageOutputModel, related_name='bbox', on_delete=models.CASCADE)
-
-    bbox_value = models.FloatField(blank=False)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f'<bbox_value: {self.bbox_value}>'
-
-    class Meta:
-        ordering = ('-created_at',)
-        verbose_name = 'imageoutputbbox'
-        verbose_name_plural = 'imageoutputbboxs'
